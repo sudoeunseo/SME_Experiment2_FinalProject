@@ -214,27 +214,13 @@ RANSAC은 outlier가 있는 상황에서 일부 subset으로 후보 모델을 �
 
 세 anchor \(a,j,k\)에 대해 range equation을 서로 빼면 다음과 같은 2차항 제거 선형식이 된다.
 
-$$
-2(\mathbf{b}_a-\mathbf{b}_j)^T\mathbf{u}
-=
-d_j^2-d_a^2-\|\mathbf{b}_j\|_2^2+\|\mathbf{b}_a\|_2^2
-$$
+2(b_a - b_j)^T u = d_j^2 - d_a^2 - ||b_j||_2^2 + ||b_a||_2^2
 
-$$
-2(\mathbf{b}_a-\mathbf{b}_k)^T\mathbf{u}
-=
-d_k^2-d_a^2-\|\mathbf{b}_k\|_2^2+\|\mathbf{b}_a\|_2^2
-$$
+2(b_a - b_k)^T u = d_k^2 - d_a^2 - ||b_k||_2^2 + ||b_a||_2^2
 
 이 2×2 선형식을 풀어 triplet candidate \(\mathbf{u}_{tri}\)를 만든다. 이후 모든 anchor에 대해 residual을 계산하고, 다음과 같은 robust score를 이용해 후보를 정렬했다.
 
-$$
-S(\mathbf{u}) =
-\operatorname{median}(|r|)
-+0.25\cdot IQR(|r|)
-+0.15\cdot \operatorname{weighted\_mean}(\min(|r|,4\tau))
-+0.15\cdot \operatorname{median}(p^+)
-$$
+S(u) = median(|r|) + 0.25*IQR(|r|) + 0.15*weighted_mean(min(|r|, 4τ)) + 0.15*median(p+)
 
 상위 후보들은 score의 역수 제곱에 비례하는 weight로 평균하여 초기값을 만들고, 마지막에는 soft_l1 robust NLS로 다시 보정한다. 즉 본 프로젝트의 RANSAC expert는 random consensus를 그대로 복사한 것이 아니라, anchor geometry와 robust residual score를 결합한 deterministic RANSAC-like multilateration expert이다.
 
