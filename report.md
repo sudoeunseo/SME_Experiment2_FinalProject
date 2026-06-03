@@ -214,27 +214,27 @@ RANSAC은 outlier가 있는 상황에서 일부 subset으로 후보 모델을 �
 
 세 anchor \(a,j,k\)에 대해 range equation을 서로 빼면 다음과 같은 2차항 제거 선형식이 된다.
 
-\[
+$$
 2(\mathbf{b}_a-\mathbf{b}_j)^T\mathbf{u}
 =
 d_j^2-d_a^2-\|\mathbf{b}_j\|_2^2+\|\mathbf{b}_a\|_2^2
-\]
+$$
 
-\[
+$$
 2(\mathbf{b}_a-\mathbf{b}_k)^T\mathbf{u}
 =
 d_k^2-d_a^2-\|\mathbf{b}_k\|_2^2+\|\mathbf{b}_a\|_2^2
-\]
+$$
 
 이 2×2 선형식을 풀어 triplet candidate \(\mathbf{u}_{tri}\)를 만든다. 이후 모든 anchor에 대해 residual을 계산하고, 다음과 같은 robust score를 이용해 후보를 정렬했다.
 
-\[
+$$
 S(\mathbf{u}) =
 \operatorname{median}(|r|)
 +0.25\cdot IQR(|r|)
 +0.15\cdot \operatorname{weighted\_mean}(\min(|r|,4\tau))
 +0.15\cdot \operatorname{median}(p^+)
-\]
+$$
 
 상위 후보들은 score의 역수 제곱에 비례하는 weight로 평균하여 초기값을 만들고, 마지막에는 soft_l1 robust NLS로 다시 보정한다. 즉 본 프로젝트의 RANSAC expert는 random consensus를 그대로 복사한 것이 아니라, anchor geometry와 robust residual score를 결합한 deterministic RANSAC-like multilateration expert이다.
 
@@ -351,8 +351,8 @@ Residual correction은 다음과 같다.
 | [8] Cover and Hart (1967) | nearest-neighbor rule을 통해 feature space에서 가까운 sample이 label 추정에 정보를 준다는 관점을 제시했다. | fingerprint feature space에서 가까운 training sample을 이용하는 kNN 기반 위치 추정 관점을 참고했다. | classification 문제가 아니라 2D position regression에 사용했고, rank/difference robust feature 기반 inverse-distance weighted KNN, Local Ridge KNN, Safe Residual Memory의 residual interpolation에 확장했다. |
 | [9] Cheung et al. (2004) | 여러 base station의 TOA/range measurement를 이용해 mobile location을 least-squares 방식으로 추정하는 문제를 다루었다. | range measurement를 실제 거리와 measurement error가 결합된 값으로 보고 localization residual을 최소화하는 문제 설정을 참고했다. | TOA LS/CWLS estimator를 그대로 구현하지 않고, RTT 측정값의 anchor bias, NLOS, outlier를 고려해 range calibration, fingerprint prior, robust NLS, ML-based gating을 결합했다. |
 | [10] Pedregosa et al. (2011) | scikit-learn의 machine learning model, preprocessing, cross-validation 구현 체계를 제시했다. | ExtraTrees, HistGradientBoosting, preprocessing, model validation 구현 도구의 reference로 참고했다. | scikit-learn 기본 model을 단순 적용한 것이 아니라, OOF expert generation, expected-error gating, HGB direct meta learner, Safe Residual Memory를 직접 구성했다. |
-| [11] Bahl and Padmanabhan (2000) | RADAR는 실내 무선 신호를 위치별 fingerprint로 저장하고, 새로운 신호와 radio map을 비교해 위치를 추정하는 방법을 제안했다. | 무선 측정값을 위치별 fingerprint로 해석하는 indoor localization 관점을 참고했다. | RADAR의 RSS radio map을 사용하지 않고, 18개 anchor의 RTT `d_hat`을 distance fingerprint로 해석했으며, 여기에 range calibration, geometry residual, OOF expected-error gating을 결합했다. |
-| [12] SciPy Developers | `least_squares`에서 robust loss 중 `soft_l1`을 `rho(z)=2*((1+z)**0.5-1)`로 정의하고, `f_scale`로 residual scale을 조정하는 방식을 제공한다. | Robust NLS에서 큰 residual의 영향을 줄이는 soft-L1 loss 수식과 scaling 방식을 참고했다. | SciPy solver를 그대로 호출하는 것에 그치지 않고, anchor별 robust weight, fingerprint prior, positive residual downweighting, trimmed residual penalty를 함께 넣어 RTT localization용 MAP-style robust NLS expert로 사용했다. |
+| [11] Bahl and Padmanabhan (2000) | RADAR는 실내 무선 신호를 위치별 fingerprint로 저장하고, 새로운 신호와 radio map을 비교해 위치를 추정하는 방법을 제안했다. | 무선 측정값을 위치별 fingerprint로 해석하는 indoor localization 관점을 참고했다. | RADAR의 RSS radio map을 사용하지 않고, 18개 anchor의 RTT d_hat을 distance fingerprint로 해석했으며, 여기에 range calibration, geometry residual, OOF expected-error gating을 결합했다. |
+| [12] SciPy Developers | least_squares에서 robust loss 중 soft_l1을 rho(z)=2*((1+z)**0.5-1)로 정의하고, f_scale로 residual scale을 조정하는 방식을 제공한다. | Robust NLS에서 큰 residual의 영향을 줄이는 soft-L1 loss 수식과 scaling 방식을 참고했다. | SciPy solver를 그대로 호출하는 것에 그치지 않고, anchor별 robust weight, fingerprint prior, positive residual downweighting, trimmed residual penalty를 함께 넣어 RTT localization용 MAP-style robust NLS expert로 사용했다. |
 
 ## 3. Agent AI 활용 방안
 
@@ -500,26 +500,26 @@ Gate가 어떤 expert를 신뢰했는지도 확인했다. Predicted-best 기준�
 
 ## 5. Reference
 
-- [1] Jacobs, R. A., Jordan, M. I., Nowlan, S. J., & Hinton, G. E. (1991). Adaptive mixtures of local experts. Neural Computation, 3(1), 79–87. https://doi.org/10.1162/neco.1991.3.1.79 이 논문에서 참고한 부분: 여러 expert를 두고 입력 sample에 따라 expert contribution을 다르게 주는 mixture-of-experts 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 원 논문은 neural gating network 중심이지만, 본 프로젝트는 OOF에서 expert별 localization error를 학습하고 predicted expected error가 작을수록 soft weight가 커지는 error-gated MoE로 구현했다.
+- [1] Jacobs, R. A., Jordan, M. I., Nowlan, S. J., & Hinton, G. E. (1991). Adaptive mixtures of local experts. Neural computation, 3(1), 79-87. 이 논문에서 참고한 부분: 여러 expert를 두고 입력 sample에 따라 expert contribution을 다르게 주는 mixture-of-experts 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 원 논문은 neural gating network 중심이지만, 본 프로젝트는 OOF에서 expert별 localization error를 학습하고 predicted expected error가 작을수록 soft weight가 커지는 error-gated MoE로 구현했다.
 
-- [2] Wolpert, D. H. (1992). Stacked generalization. Neural Networks, 5(2), 241–259. https://doi.org/10.1016/S0893-6080(05)80023-1 이 논문에서 참고한 부분: base learner의 out-of-fold prediction을 상위 learner의 입력으로 사용하여 generalization error를 줄이는 stacking 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 단순히 여러 expert prediction을 meta learner에 넣어 좌표를 바로 예측한 것이 아니라, OOF expected-error gating, HGB direct meta learner, Safe Residual Memory를 순차적으로 구성했다.
+- [2] Wolpert, D. H. (1992). Stacked generalization. Neural networks, 5(2), 241-259. 이 논문에서 참고한 부분: base learner의 out-of-fold prediction을 상위 learner의 입력으로 사용하여 generalization error를 줄이는 stacking 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 단순히 여러 expert prediction을 meta learner에 넣어 좌표를 바로 예측한 것이 아니라, OOF expected-error gating, HGB direct meta learner, Safe Residual Memory를 순차적으로 구성했다.
 
-- [3] Van der Laan, M. J., Polley, E. C., & Hubbard, A. E. (2007). Super learner. Statistical Applications in Genetics and Molecular Biology, 6(1), Article 25. https://doi.org/10.2202/1544-6115.1309 이 논문에서 참고한 부분: cross-validation 기반으로 여러 candidate learner를 결합하는 Super Learner 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 본 프로젝트는 convex weight만 찾는 방식이 아니라, sample별 expected error prediction을 통해 weight를 다르게 주고, 별도의 direct meta correction과 residual memory를 추가했다.
+- [3] Van der Laan, M. J., Polley, E. C., & Hubbard, A. E. (2007). Super learner. Statistical Applications in Genetics and Molecular Biology, 6(1), Article 25. 이 논문에서 참고한 부분: cross-validation 기반으로 여러 candidate learner를 결합하는 Super Learner 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 본 프로젝트는 convex weight만 찾는 방식이 아니라, sample별 expected error prediction을 통해 weight를 다르게 주고, 별도의 direct meta correction과 residual memory를 추가했다.
 
-- [4] Geurts, P., Ernst, D., & Wehenkel, L. (2006). Extremely randomized trees. Machine Learning, 63, 3–42. https://doi.org/10.1007/s10994-006-6226-1 이 논문에서 참고한 부분: randomization이 강한 tree ensemble을 supervised regression에 사용하는 ExtraTrees 계열 아이디어를 참고했다. / 본 프로젝트에서 다르게 설계한 부분: ExtraTrees를 일반 좌표 회귀에만 사용하지 않고, RTT robust feature 기반 expert와 range error calibration model의 일부로 사용했다.
+- [4] Geurts, P., Ernst, D., & Wehenkel, L. (2006). Extremely randomized trees. Machine learning, 63(1), 3-42. 이 논문에서 참고한 부분: randomization이 강한 tree ensemble을 supervised regression에 사용하는 ExtraTrees 계열 아이디어를 참고했다. / 본 프로젝트에서 다르게 설계한 부분: ExtraTrees를 일반 좌표 회귀에만 사용하지 않고, RTT robust feature 기반 expert와 range error calibration model의 일부로 사용했다.
 
-- [5] Friedman, J. H. (2001). Greedy function approximation: A gradient boosting machine. The Annals of Statistics, 29(5), 1189–1232. https://doi.org/10.1214/aos/1013203451 이 논문에서 참고한 부분: gradient boosting을 함수 공간에서의 순차적 근사로 보는 관점을 참고했고, HistGradientBoostingRegressor 기반 nonlinear regression expert와 HGB direct meta learner를 구성했다. / 본 프로젝트에서 다르게 설계한 부분: 일반 tabular regression으로만 사용한 것이 아니라, RTT calibration feature, expert prediction, gate weight, predicted error를 결합한 localization-specific meta feature 위에서 사용했다.
+- [5] Friedman, J. H. (2001). Greedy function approximation: a gradient boosting machine. Annals of statistics, 1189-1232. 이 논문에서 참고한 부분: gradient boosting을 함수 공간에서의 순차적 근사로 보는 관점을 참고했고, HistGradientBoostingRegressor 기반 nonlinear regression expert와 HGB direct meta learner를 구성했다. / 본 프로젝트에서 다르게 설계한 부분: 일반 tabular regression으로만 사용한 것이 아니라, RTT calibration feature, expert prediction, gate weight, predicted error를 결합한 localization-specific meta feature 위에서 사용했다.
 
-- [6] Fischler, M. A., & Bolles, R. C. (1981). Random sample consensus: A paradigm for model fitting with applications to image analysis and automated cartography. Communications of the ACM, 24(6), 381–395. https://doi.org/10.1145/358669.358692 이 논문에서 참고한 부분: outlier가 포함된 측정값에서 subset 기반 후보 model을 만들고 residual consensus로 평가하는 RANSAC 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 완전한 random sampling이 아니라 anchor triplet 후보를 deterministic하게 만들고, robust residual score로 ranking한 뒤 soft-L1 NLS로 보정하는 RANSAC-like multilateration expert로 변형했다.
+- [6] Fischler, M. A., & Bolles, R. C. (1981). Random sample consensus: a paradigm for model fitting with applications to image analysis and automated cartography. Communications of the ACM, 24(6), 381-395. 이 논문에서 참고한 부분: outlier가 포함된 측정값에서 subset 기반 후보 model을 만들고 residual consensus로 평가하는 RANSAC 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 완전한 random sampling이 아니라 anchor triplet 후보를 deterministic하게 만들고, robust residual score로 ranking한 뒤 soft-L1 NLS로 보정하는 RANSAC-like multilateration expert로 변형했다.
 
-- [7] Huber, P. J. (1964). Robust estimation of a location parameter. The Annals of Mathematical Statistics, 35(1), 73–101. https://doi.org/10.1214/aoms/1177703732 이 논문에서 참고한 부분: outlier에 덜 민감한 robust estimation 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 원 논문은 location parameter의 robust estimation을 다루지만, 본 프로젝트에서는 anchor별 MAD scale, HuberRegressor 기반 safe affine calibration, soft-L1 NLS, residual downweighting을 통해 RTT NLOS/outlier 영향을 줄이는 데 응용했다.
+- [7] Huber, P. J. (1992). Robust estimation of a location parameter. In Breakthroughs in statistics: Methodology and distribution (pp. 492-518). New York, NY: Springer New York. 이 논문에서 참고한 부분: outlier에 덜 민감한 robust estimation 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 원 논문은 location parameter의 robust estimation을 다루지만, 본 프로젝트에서는 anchor별 MAD scale, HuberRegressor 기반 safe affine calibration, soft-L1 NLS, residual downweighting을 통해 RTT NLOS/outlier 영향을 줄이는 데 응용했다.
 
-- [8] Cover, T. M., & Hart, P. E. (1967). Nearest neighbor pattern classification. IEEE Transactions on Information Theory, 13(1), 21–27. https://doi.org/10.1109/TIT.1967.1053964 이 논문에서 참고한 부분: feature space에서 가까운 sample을 활용하는 nearest-neighbor 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 분류가 아니라 위치 회귀 문제에 적용했고, rank/difference robust feature space에서 inverse-distance weighted KNN, Local Ridge KNN, Safe Residual Memory의 residual interpolation으로 확장했다.
+- [8] Cover, T., & Hart, P. (1967). Nearest neighbor pattern classification. IEEE transactions on information theory, 13(1), 21-27. 이 논문에서 참고한 부분: feature space에서 가까운 sample을 활용하는 nearest-neighbor 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 분류가 아니라 위치 회귀 문제에 적용했고, rank/difference robust feature space에서 inverse-distance weighted KNN, Local Ridge KNN, Safe Residual Memory의 residual interpolation으로 확장했다.
 
-- [9] Cheung, K. W., So, H. C., Ma, W.-K., & Chan, Y. T. (2004). Least squares algorithms for time-of-arrival-based mobile location. IEEE Transactions on Signal Processing, 52(4), 1121–1130. https://doi.org/10.1109/TSP.2004.823465 이 논문에서 참고한 부분: 여러 base station의 TOA/range measurement를 이용해 mobile position을 least-squares 방식으로 추정하는 위치추정 문제 설정을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 본 프로젝트는 RTT 측정값의 NLOS bias와 outlier를 고려하여 fingerprint prior, anchor별 robust calibration, trimmed residual, soft-L1 NLS, ML 기반 gating을 결합했다.
+- [9] Cheung, K. W., So, H. C., Ma, W. K., & Chan, Y. T. (2004). Least squares algorithms for time-of-arrival-based mobile location. IEEE transactions on signal processing, 52(4), 1121-1130. 이 논문에서 참고한 부분: 여러 base station의 TOA/range measurement를 이용해 mobile position을 least-squares 방식으로 추정하는 위치추정 문제 설정을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: 본 프로젝트는 RTT 측정값의 NLOS bias와 outlier를 고려하여 fingerprint prior, anchor별 robust calibration, trimmed residual, soft-L1 NLS, ML 기반 gating을 결합했다.
 
-- [10] Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., Blondel, M., Prettenhofer, P., Weiss, R., Dubourg, V., Vanderplas, J., Passos, A., Cournapeau, D., Brucher, M., Perrot, M., & Duchesnay, É. (2011). Scikit-learn: Machine learning in Python. Journal of Machine Learning Research, 12, 2825–2830. 이 논문에서 참고한 부분: Python 기반 machine learning 구현 도구인 scikit-learn의 model, preprocessing, cross-validation 구현 체계를 참고했다. / 본 프로젝트에서 다르게 설계한 부분: scikit-learn의 기본 model을 그대로 제출한 것이 아니라, RTT calibration feature, OOF expert generation, expected-error gating, HGB direct meta learner, residual memory를 직접 구성했다.
+- [10] Pedregosa, F., Varoquaux, G., Gramfort, A., Michel, V., Thirion, B., Grisel, O., ... & Duchesnay, É. (2011). Scikit-learn: Machine learning in Python. the Journal of machine Learning research, 12, 2825-2830. 이 논문에서 참고한 부분: Python 기반 machine learning 구현 도구인 scikit-learn의 model, preprocessing, cross-validation 구현 체계를 참고했다. / 본 프로젝트에서 다르게 설계한 부분: scikit-learn의 기본 model을 그대로 제출한 것이 아니라, RTT calibration feature, OOF expert generation, expected-error gating, HGB direct meta learner, residual memory를 직접 구성했다.
 
-- [11] Bahl, P., & Padmanabhan, V. N. (2000). RADAR: An in-building RF-based user location and tracking system. Proceedings IEEE INFOCOM 2000, 775–784. https://doi.org/10.1109/INFCOM.2000.832252 이 논문에서 참고한 부분: 실내 무선 신호를 위치별 fingerprint로 활용하는 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: RADAR의 RSS radio map을 그대로 구현한 것이 아니라, 제공된 RTT `d_hat`을 anchor별 거리 패턴 fingerprint로 해석하고, 여기에 range calibration, geometry residual, OOF gating을 결합했다.
+- [11] Bahl, P., & Padmanabhan, V. N. (2000, March). RADAR: An in-building RF-based user location and tracking system. In Proceedings IEEE INFOCOM 2000. Conference on computer communications. Nineteenth annual joint conference of the IEEE computer and communications societies (Cat. No. 00CH37064) (Vol. 2, pp. 775-784). Ieee. 이 논문에서 참고한 부분: 실내 무선 신호를 위치별 fingerprint로 활용하는 관점을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: RADAR의 RSS radio map을 그대로 구현한 것이 아니라, 제공된 RTT d_hat을 anchor별 거리 패턴 fingerprint로 해석하고, 여기에 range calibration, geometry residual, OOF gating을 결합했다.
 
-- [12] SciPy Developers. (n.d.). scipy.optimize.least_squares. SciPy documentation. 이 문서에서 참고한 부분: Robust NLS에서 사용한 `soft_l1` loss의 수식 `rho(z)=2*((1+z)**0.5-1)` 및 `f_scale`에 의한 robust loss scaling 방식을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: SciPy의 일반 least-squares solver를 그대로 적용한 것이 아니라, RTT localization residual, anchor별 robust weight, fingerprint prior, residual downweighting을 결합한 MAP-style robust NLS expert로 사용했다.
+- [12] SciPy Developers. (n.d.). scipy.optimize.least_squares. SciPy documentation. 이 문서에서 참고한 부분: Robust NLS에서 사용한 'soft_l1' loss의 수식 rho(z)=2*((1+z)**0.5-1) 및 f_scale에 의한 robust loss scaling 방식을 참고했다. / 본 프로젝트에서 다르게 설계한 부분: SciPy의 일반 least-squares solver를 그대로 적용한 것이 아니라, RTT localization residual, anchor별 robust weight, fingerprint prior, residual downweighting을 결합한 MAP-style robust NLS expert로 사용했다.
